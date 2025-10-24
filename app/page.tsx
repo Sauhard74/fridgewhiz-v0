@@ -22,6 +22,8 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [maxCalories, setMaxCalories] = useState<number | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
+  const [diet, setDiet] = useState<string>("none");
+  const [intolerances, setIntolerances] = useState<string[]>([]);
 
   const addIngredient = () => {
     if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
@@ -37,6 +39,14 @@ export default function Home() {
     );
     if (newIngredients.length > 0) {
       setIngredients([...ingredients, ...newIngredients]);
+    }
+  };
+
+  const handleIntoleranceToggle = (intolerance: string) => {
+    if (intolerances.includes(intolerance)) {
+      setIntolerances(intolerances.filter((i) => i !== intolerance));
+    } else {
+      setIntolerances([...intolerances, intolerance]);
     }
   };
 
@@ -62,6 +72,8 @@ export default function Home() {
           ingredients,
           maxCalories: maxCalories || undefined,
           maxPrice: maxPrice || undefined,
+          diet: diet !== "none" ? diet : undefined,
+          intolerances: intolerances.length > 0 ? intolerances : undefined,
         }),
       });
 
@@ -161,33 +173,78 @@ export default function Home() {
           )}
 
           {/* Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="space-y-4 mb-6">
+            {/* Diet Type */}
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <Flame className="w-4 h-4 text-orange-500" />
-                Max Calories (per serving)
+                🥗 Diet Preference
               </label>
-              <input
-                type="number"
-                value={maxCalories}
-                onChange={(e) => setMaxCalories(e.target.value ? parseInt(e.target.value) : "")}
-                placeholder="e.g., 500"
+              <select
+                value={diet}
+                onChange={(e) => setDiet(e.target.value)}
                 className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
-              />
+              >
+                <option value="none">No Preference</option>
+                <option value="vegetarian">Vegetarian</option>
+                <option value="vegan">Vegan</option>
+                <option value="ketogenic">Ketogenic</option>
+                <option value="paleo">Paleo</option>
+                <option value="gluten free">Gluten Free</option>
+                <option value="pescetarian">Pescetarian</option>
+              </select>
             </div>
+
+            {/* Allergies & Intolerances */}
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-                <DollarSign className="w-4 h-4 text-green-600" />
-                Max Price (per serving, $)
+                ⚠️ Allergies & Intolerances
               </label>
-              <input
-                type="number"
-                step="0.50"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value ? parseFloat(e.target.value) : "")}
-                placeholder="e.g., 5.00"
-                className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
-              />
+              <div className="flex flex-wrap gap-2">
+                {["dairy", "egg", "gluten", "peanut", "sesame", "seafood", "shellfish", "soy", "tree nut", "wheat"].map((intolerance) => (
+                  <button
+                    key={intolerance}
+                    onClick={() => handleIntoleranceToggle(intolerance)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      intolerances.includes(intolerance)
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    {intolerance.charAt(0).toUpperCase() + intolerance.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Nutrition Filters */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  Max Calories (per serving)
+                </label>
+                <input
+                  type="number"
+                  value={maxCalories}
+                  onChange={(e) => setMaxCalories(e.target.value ? parseInt(e.target.value) : "")}
+                  placeholder="e.g., 500"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
+                />
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <DollarSign className="w-4 h-4 text-green-600" />
+                  Max Price (per serving, $)
+                </label>
+                <input
+                  type="number"
+                  step="0.50"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(e.target.value ? parseFloat(e.target.value) : "")}
+                  placeholder="e.g., 5.00"
+                  className="w-full px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-primary-500 focus:outline-none transition-colors"
+                />
+              </div>
             </div>
           </div>
 

@@ -8,6 +8,8 @@ interface RecipeRequest {
   ingredients: string[];
   maxCalories?: number;
   maxPrice?: number;
+  diet?: string;
+  intolerances?: string[];
 }
 
 interface SpoonacularRecipe {
@@ -122,7 +124,7 @@ async function enrichRecipeDetails(
 export async function POST(request: NextRequest) {
   try {
     const body: RecipeRequest = await request.json();
-    const { ingredients, maxCalories, maxPrice } = body;
+    const { ingredients, maxCalories, maxPrice, diet, intolerances } = body;
 
     if (!ingredients || ingredients.length === 0) {
       return NextResponse.json(
@@ -138,17 +140,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Build query params for Spoonacular
+    const queryParams: any = {
+      apiKey: SPOONACULAR_API_KEY,
+      ingredients: ingredients.join(","),
+      number: 12,
+      ranking: 2, // Maximize used ingredients
+      ignorePantry: true,
+    };
+
+    // Add diet filter if specified
+    if (diet && diet !== "none") {
+      queryParams.diet = diet;
+    }
+
+    // Add intolerances filter if specified
+    if (intolerances && intolerances.length > 0) {
+      queryParams.intolerances = intolerances.join(",");
+    }
+
     // Fetch recipes from Spoonacular
     const response = await axios.get(
       "https://api.spoonacular.com/recipes/findByIngredients",
       {
-        params: {
-          apiKey: SPOONACULAR_API_KEY,
-          ingredients: ingredients.join(","),
-          number: 12,
-          ranking: 2, // Maximize used ingredients
-          ignorePantry: true,
-        },
+        params: queryParams,
       }
     );
 

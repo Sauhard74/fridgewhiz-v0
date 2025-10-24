@@ -11,11 +11,13 @@ Find delicious recipes based on what's in your fridge! FridgeWhiz helps you redu
 - 📸 **AI Image Recognition**: Upload photos of your fridge and automatically detect ingredients using GPT-4 Vision
 - 🖱️ **Drag & Drop Upload**: Easy image upload with drag-and-drop support
 - 🔍 **Smart Recipe Search**: Find recipes based on ingredients you have
+- 📖 **Detailed Recipe Pages**: View complete recipes with ingredients, instructions, and nutrition on your site
 - 🎨 **Beautiful UI**: Modern, responsive design with Tailwind CSS
 - 🔥 **Calorie Filter**: Set maximum calories per serving
 - 💰 **Budget Filter**: Filter by price per serving
 - 🤖 **AI-Powered Fun Names**: Get creative recipe names like "Crisis Curry" or "End-of-Month Pasta"
 - ❤️ **Recipe Ratings**: See popular recipes with like counts
+- 🏷️ **Recipe Tags**: Vegan, vegetarian, gluten-free, dairy-free indicators
 - 📱 **Mobile-Friendly**: Works perfectly on all devices
 
 ## 🚀 Quick Start
@@ -75,7 +77,12 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 4. **Find Recipes**: Click the "Find Recipes" button
 
-5. **Explore**: Browse through the recipe suggestions and click "View Recipe" for full details
+5. **View Details**: Click on any recipe to see full details including:
+   - Complete ingredient list
+   - Step-by-step cooking instructions
+   - Nutrition information
+   - Dietary tags (vegan, vegetarian, etc.)
+   - Cooking time and servings
 
 ## 📁 Project Structure
 
@@ -85,11 +92,17 @@ project/
 │   ├── api/
 │   │   ├── analyze-image/
 │   │   │   └── route.ts          # AI image analysis endpoint
+│   │   ├── recipe/
+│   │   │   └── [id]/
+│   │   │       └── route.ts      # API for single recipe details
 │   │   └── recipes/
 │   │       └── route.ts          # API endpoint for recipe search
 │   ├── components/
 │   │   ├── ImageUpload.tsx       # Image upload with AI detection
 │   │   └── RecipeCard.tsx        # Recipe display component
+│   ├── recipe/
+│   │   └── [id]/
+│   │       └── page.tsx          # Recipe details page
 │   ├── globals.css               # Global styles
 │   ├── layout.tsx                # Root layout
 │   └── page.tsx                  # Main page

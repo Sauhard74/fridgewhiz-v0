@@ -5,10 +5,10 @@ const SPOONACULAR_API_KEY = process.env.SPOONACULAR_API_KEY;
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const recipeId = params.id;
+    const { id: recipeId } = await params;
 
     if (!SPOONACULAR_API_KEY) {
       return NextResponse.json(

@@ -24,6 +24,7 @@ export default function Home() {
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [diet, setDiet] = useState<string>("none");
   const [intolerances, setIntolerances] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const addIngredient = () => {
     if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
@@ -64,6 +65,7 @@ export default function Home() {
     if (ingredients.length === 0) return;
 
     setLoading(true);
+    setError(null);
     try {
       const response = await fetch("/api/recipes", {
         method: "POST",
@@ -78,9 +80,16 @@ export default function Home() {
       });
 
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch recipes");
+      }
+
       setRecipes(data.recipes || []);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching recipes:", error);
+      setError(error.message || "Failed to fetch recipes. Please try again.");
+      setRecipes([]);
     } finally {
       setLoading(false);
     }
@@ -266,6 +275,31 @@ export default function Home() {
               </>
             )}
           </button>
+
+          {/* Error Message */}
+          {error && (
+            <div className="mt-4 bg-red-50 border-2 border-red-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                  !
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-red-800 font-bold mb-1">Error</h3>
+                  <p className="text-red-700 text-sm">{error}</p>
+                  {error.includes("quota") && (
+                    <div className="mt-3 pt-3 border-t border-red-200">
+                      <p className="text-red-600 text-xs font-medium mb-2">Solutions:</p>
+                      <ul className="text-red-600 text-xs space-y-1 list-disc list-inside">
+                        <li>Wait 24 hours for your API quota to reset</li>
+                        <li>Check your usage at: <a href="https://spoonacular.com/food-api/console#Dashboard" target="_blank" rel="noopener noreferrer" className="underline">Spoonacular Dashboard</a></li>
+                        <li>Consider upgrading to a paid plan for more requests</li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Results Section */}

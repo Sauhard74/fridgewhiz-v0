@@ -1,5 +1,6 @@
-import { Heart, ExternalLink, CheckCircle, AlertCircle } from "lucide-react";
+import { Heart, ArrowRight, CheckCircle, AlertCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Recipe {
   id: number;
@@ -102,15 +103,13 @@ export default function RecipeCard({ recipe }: RecipeCardProps) {
             <Heart className="w-4 h-4 fill-red-500 text-red-500" />
             <span className="text-sm font-medium">{recipe.likes}</span>
           </div>
-          <a
-            href={`https://spoonacular.com/recipes/${recipe.title.replace(/\s+/g, "-").toLowerCase()}-${recipe.id}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/recipe/${recipe.id}`}
             className="flex items-center gap-1 text-primary-600 hover:text-primary-700 font-medium text-sm transition-colors"
           >
             View Recipe
-            <ExternalLink className="w-4 h-4" />
-          </a>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </div>

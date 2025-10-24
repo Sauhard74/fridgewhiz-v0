@@ -8,11 +8,13 @@ Find delicious recipes based on what's in your fridge! FridgeWhiz helps you redu
 
 ## ✨ Features
 
+- 📸 **AI Image Recognition**: Upload photos of your fridge and automatically detect ingredients using GPT-4 Vision
+- 🖱️ **Drag & Drop Upload**: Easy image upload with drag-and-drop support
 - 🔍 **Smart Recipe Search**: Find recipes based on ingredients you have
 - 🎨 **Beautiful UI**: Modern, responsive design with Tailwind CSS
 - 🔥 **Calorie Filter**: Set maximum calories per serving
 - 💰 **Budget Filter**: Filter by price per serving
-- 🤖 **AI-Powered Fun Names**: Get creative recipe names like "Crisis Curry" or "End-of-Month Pasta" (optional)
+- 🤖 **AI-Powered Fun Names**: Get creative recipe names like "Crisis Curry" or "End-of-Month Pasta"
 - ❤️ **Recipe Ratings**: See popular recipes with like counts
 - 📱 **Mobile-Friendly**: Works perfectly on all devices
 
@@ -22,7 +24,7 @@ Find delicious recipes based on what's in your fridge! FridgeWhiz helps you redu
 
 - Node.js 18+ installed
 - A [Spoonacular API key](https://spoonacular.com/food-api/console#Dashboard) (free tier available)
-- (Optional) An [OpenAI API key](https://platform.openai.com/api-keys) for fun recipe names
+- An [OpenAI API key](https://platform.openai.com/api-keys) for image recognition and fun recipe names
 
 ### Installation
 
@@ -45,7 +47,7 @@ Create a `.env.local` file in the root directory:
 # Required: Get your free API key from https://spoonacular.com/food-api/console#Dashboard
 SPOONACULAR_API_KEY=your_spoonacular_api_key_here
 
-# Optional: For creative recipe names - Get from https://platform.openai.com/api-keys
+# Required: For AI image recognition and creative recipe names - Get from https://platform.openai.com/api-keys
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
@@ -60,12 +62,20 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 
 ## 🎯 How to Use
 
-1. **Add Ingredients**: Type in what ingredients you have in your fridge and click "Add"
-2. **Set Filters** (Optional):
+1. **Upload a Photo** (AI-Powered):
+   - Click the upload area or drag & drop an image of your fridge
+   - AI will automatically detect ingredients in seconds
+   - Watch as ingredients are added to your list automatically
+
+2. **Or Add Manually**: Type in what ingredients you have and click "Add"
+
+3. **Set Filters** (Optional):
    - Max Calories: Set maximum calories per serving
    - Max Price: Set maximum price per serving in dollars
-3. **Find Recipes**: Click the "Find Recipes" button
-4. **Explore**: Browse through the recipe suggestions and click "View Recipe" for full details
+
+4. **Find Recipes**: Click the "Find Recipes" button
+
+5. **Explore**: Browse through the recipe suggestions and click "View Recipe" for full details
 
 ## 📁 Project Structure
 
@@ -73,9 +83,12 @@ Navigate to [http://localhost:3000](http://localhost:3000)
 project/
 ├── app/
 │   ├── api/
+│   │   ├── analyze-image/
+│   │   │   └── route.ts          # AI image analysis endpoint
 │   │   └── recipes/
 │   │       └── route.ts          # API endpoint for recipe search
 │   ├── components/
+│   │   ├── ImageUpload.tsx       # Image upload with AI detection
 │   │   └── RecipeCard.tsx        # Recipe display component
 │   ├── globals.css               # Global styles
 │   ├── layout.tsx                # Root layout
@@ -97,7 +110,7 @@ project/
 - **Styling**: Tailwind CSS
 - **APIs**: 
   - Spoonacular (Recipe data)
-  - OpenAI (Optional - AI-generated fun names)
+  - OpenAI GPT-4o-mini (AI image recognition & fun names)
 - **UI Icons**: Lucide React
 - **HTTP Client**: Axios
 
@@ -151,21 +164,29 @@ Remember to add your API keys in the Vercel project settings after deployment!
 3. Get your API key (150 requests/day on free tier)
 4. Add to `.env.local` as `SPOONACULAR_API_KEY`
 
-### OpenAI (Optional)
+### OpenAI
 
 1. Visit [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
 2. Sign up and create an API key
 3. Add to `.env.local` as `OPENAI_API_KEY`
-4. Note: This adds fun, creative names to recipes but is not required for core functionality
+4. Note: This is required for image recognition and fun recipe names
 
 ## 📝 Environment Variables
 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `SPOONACULAR_API_KEY` | ✅ Yes | API key from Spoonacular for recipe data |
-| `OPENAI_API_KEY` | ⭕ Optional | API key from OpenAI for creative recipe names |
+| `OPENAI_API_KEY` | ✅ Yes | API key from OpenAI for image recognition and creative names |
 
 ## 🎨 Features in Detail
+
+### AI Image Recognition
+Upload a photo of your fridge, and GPT-4 Vision will automatically analyze it and detect all visible ingredients. The AI can identify:
+- Fresh produce (vegetables, fruits)
+- Meats and proteins
+- Dairy products
+- Pantry items
+- Condiments and more
 
 ### Recipe Search
 The app uses Spoonacular's "Find by Ingredients" endpoint to search for recipes that maximize the use of your available ingredients while minimizing missing ones.
@@ -177,7 +198,7 @@ When you set a max calorie limit, the app fetches detailed nutrition information
 Filter recipes by cost per serving to stay within your budget.
 
 ### AI Fun Names
-If OpenAI is configured, recipes get creative, humorous names like:
+Recipes get creative, humorous names generated by AI like:
 - "Crisis Curry" 
 - "End-of-Month Pasta"
 - "Fridge Cleanout Special"
@@ -221,7 +242,7 @@ MIT License - feel free to use this project for personal or commercial purposes.
 ## 🐛 Troubleshooting
 
 ### "Invalid API key" error
-- Check that your `SPOONACULAR_API_KEY` is correctly set in `.env.local`
+- Check that your `SPOONACULAR_API_KEY` and `OPENAI_API_KEY` are correctly set in `.env.local`
 - Make sure to restart the dev server after adding environment variables
 
 ### "API quota exceeded" error
@@ -229,8 +250,13 @@ MIT License - feel free to use this project for personal or commercial purposes.
 - Consider upgrading to a paid plan for more requests
 
 ### No fun recipe names appearing
-- This is expected if `OPENAI_API_KEY` is not set (it's optional)
-- Add the OpenAI API key to enable this feature
+- Check that your `OPENAI_API_KEY` is correctly set
+- The OpenAI API key is required for both image recognition and fun names
+
+### Image upload not working
+- Ensure your OpenAI API key is configured
+- Check that the image file is a valid format (JPG, PNG, etc.)
+- Try a clearer image with better lighting
 
 ## 📞 Support
 

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { ChefHat, Plus, X, Search, Loader2, Flame, DollarSign } from "lucide-react";
+import { ChefHat, Plus, X, Search, Loader2, Flame, DollarSign, Sparkles } from "lucide-react";
 import RecipeCard from "./components/RecipeCard";
+import ImageUpload from "./components/ImageUpload";
 
 interface Recipe {
   id: number;
@@ -26,6 +27,16 @@ export default function Home() {
     if (currentIngredient.trim() && !ingredients.includes(currentIngredient.trim())) {
       setIngredients([...ingredients, currentIngredient.trim()]);
       setCurrentIngredient("");
+    }
+  };
+
+  const handleIngredientsDetected = (detectedIngredients: string[]) => {
+    // Add detected ingredients that aren't already in the list
+    const newIngredients = detectedIngredients.filter(
+      (ing) => !ingredients.includes(ing)
+    );
+    if (newIngredients.length > 0) {
+      setIngredients([...ingredients, ...newIngredients]);
     }
   };
 
@@ -81,11 +92,34 @@ export default function Home() {
 
         {/* Input Section */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+          <h2 className="text-2xl font-semibold mb-6 text-gray-800">
             What's in your fridge?
           </h2>
 
-          {/* Ingredient Input */}
+          {/* Image Upload Section */}
+          <div className="mb-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Sparkles className="w-5 h-5 text-purple-600" />
+              <h3 className="text-lg font-semibold text-gray-700">
+                AI-Powered Detection
+              </h3>
+            </div>
+            <ImageUpload onIngredientsDetected={handleIngredientsDetected} />
+          </div>
+
+          {/* Divider */}
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-300"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-white text-gray-500 font-medium">
+                Or add manually
+              </span>
+            </div>
+          </div>
+
+          {/* Manual Ingredient Input */}
           <div className="flex gap-2 mb-4">
             <input
               type="text"
